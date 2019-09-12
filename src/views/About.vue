@@ -1,16 +1,16 @@
 <template>
   <div class="about">
     <h1>現在地</h1>
-    <p>緯度：{{latitude}}</p>
-    <p>経度：{{longitude}}</p>
+    <p>緯度：{{latitude | round}}</p>
+    <p>経度：{{longitude | round}}</p>
 
     <h2>1分前</h2>
-    <p>緯度：{{lat1}}</p>
-    <p>経度：{{lng1}}</p>
+    <p>緯度：{{lat1 | round}}</p>
+    <p>経度：{{lng1 | round}}</p>
 
     <h2>歩いた距離</h2>
     <p>1分間で歩いた距離：{{d}} km</p>
-    <p>合計：{{length}} km</p>
+    <p>合計：{{length | round}} km</p>
   </div>
 </template>
 
@@ -86,6 +86,13 @@ export default {
     } else {
       // エラー処理を書く
       console.log("error");
+    }
+  },
+
+  filters: {
+    // 小数点以下を第3位に丸めるフィルタ
+    round: function (val) {
+      return Math.round(val * 1000) / 1000
     }
   }
 }
