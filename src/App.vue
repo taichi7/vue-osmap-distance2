@@ -1,8 +1,14 @@
 <template>
   <div id="app">
+    <nav class="navbar has-background-info">
+      <div class="navbar-brand">
+        <a class="navbar-item has-text-white" href="https://i-doctor.sakura.ne.jp/font/?p=40818"> Vue OpenStreetMap Distance </a>
+      </div>
+    </nav>
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/">Map</router-link>
+      <span> | </span>
+      <router-link to="/about">Distance</router-link>
     </div>
     <router-view/>
   </div>
@@ -16,8 +22,9 @@
   text-align: center;
   color: #2c3e50;
 }
+
 #nav {
-  padding: 30px;
+  padding: 2px;
 }
 
 #nav a {

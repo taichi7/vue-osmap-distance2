@@ -1,16 +1,44 @@
 <template>
   <div class="about">
-    <h1>現在地</h1>
-    <p>緯度：{{latitude | round}}</p>
-    <p>経度：{{longitude | round}}</p>
+    <section class="section">
+      <div class="container">
+        <article class="message is-primary">
+          <div class="message-header">
+            <p>現在地</p>
+            <button class="delete" aria-label="delete"></button>
+          </div>
+          <div class="message-body">
+            <p>緯度：{{latitude | round}} 　 経度：{{longitude | round}}</p>
+          </div>
+        </article>
 
-    <h2>1分前</h2>
-    <p>緯度：{{lat1 | round}}</p>
-    <p>経度：{{lng1 | round}}</p>
+        <article class="message is-info">
+          <div class="message-header">
+            <p>1分前</p>
+            <button class="delete" aria-label="delete"></button>
+          </div>
+          <div class="message-body">
+            <p>緯度：{{lat1 | round}} 　 経度：{{lng1 | round}}</p>
+          </div>
+        </article>
 
-    <h2>歩いた距離</h2>
-    <p>1分間で歩いた距離：{{d}} km</p>
-    <p>合計：{{length | round}} km</p>
+        <article class="message is-dark">
+          <div class="message-header">
+            <p>歩いた距離</p>
+            <button class="delete" aria-label="delete"></button>
+          </div>
+          <div class="message-body">
+            <p>1分間で歩いた距離：{{d | round}} km</p>
+            <p>合計：{{length | round}} km</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <a href="https://i-doctor.sakura.ne.jp/font/?p=408184">WordPressでフリーオリジナルフォント2</a>
+    </footer>
+
   </div>
 </template>
 
