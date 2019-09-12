@@ -5,7 +5,7 @@
     <p>経度：{{longitude}}</p>
 
     <h2>1分前</h2>
-    <p>緯度：{{lat2}}</p>
+    <p>緯度：{{lat1}}</p>
     <p>経度：{{lng1}}</p>
 
     <h2>歩いた距離</h2>
@@ -45,30 +45,23 @@ export default {
           //10秒毎にcalcDistance関数を実行する
           setInterval(function () {
             console.log('hi');
-            /*
-            navigator.geolocation.getCurrentPosition(
-              function(position){
-                self.lat2 = position.coords.latitude;
-                self.lng2 = position.coords.longitude;
-              })
-              */
-              calcDistance();
-          }, 20000);
+            calcDistance();
+          }, 5000);
 
           function calcDistance(){
             navigator.geolocation.getCurrentPosition(
               function(position) { 
-
                 console.log('ho');
-
                 self.lat2 = position.coords.latitude;
                 self.lng2 = position.coords.longitude;
-                //self.lat1 = self.lat2
-                //self.lng1 = self.lng2
 
-                self.d = distance(self.lat1, self.lng1, self.lat2, self.lng2)
+                if (self.lat1) {
+                  self.d = distance(self.lat1, self.lng1, self.lat2, self.lng2)
+                } else {
+                  self.lat1 = self.lat2
+                  self.lng1 = self.lng2
+                }
                 self.length = self.length + self.d
-                
                 console.log(self.d);
 
                 self.lat1 = self.lat2
