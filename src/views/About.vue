@@ -55,10 +55,14 @@ export default {
       lng2: 0,
     
       d: 0,
-      length: 0
+      length: 0,
     }
   },
   mounted() {
+    if (localStorage.length) {
+      this.length = localStorage.length
+    }
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         function(position){
@@ -91,6 +95,8 @@ export default {
                 }
                 self.length = self.length + self.d
                 console.log(self.d);
+                console.log(self.length);
+                localStorage.setItem('length', self.length)
 
                 self.lat1 = self.lat2
                 self.lng1 = self.lng2
