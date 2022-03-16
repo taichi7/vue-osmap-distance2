@@ -123,6 +123,23 @@ export default {
                 self.lng1 = self.lng2
               }
             );
+            const target = document.getElementById("targetCal")
+            const value = target.value
+            if (value >= length) {
+              var result = window.confirm('目標達成！！　画面が閉じます。');  
+              if( result ) {
+                // 自windowを閉じる
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　function winClose(){
+  　　　　　　　　　　　　　　　　　　　　　　　　　　　　open('about:blank', '_self').close();    //一度再表示してからClose
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　};
+              }
+              else {
+                // 自windowを閉じる
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　function winClose(){
+  　　　　　　　　　　　　　　　　　　　　　　　　　　　　open('about:blank', '_self').close();    //一度再表示してからClose
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　};
+              }
+            }
           }
  
           function distance(lat1, lng1, lat2, lng2) {
