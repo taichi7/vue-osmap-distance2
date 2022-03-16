@@ -32,6 +32,16 @@
             <p>合計：{{length | round}} km</p>
           </div>
         </article>
+        
+        <article class="message is-cal">
+          <div class="message-header">
+            <p>消費カロリー</p>
+            <button class="delete" aria-label="delete"></button>
+          </div>
+          <div class="message-body">
+            <p>合計：{{length | round}} km</p>
+          </div>
+        </article>
       </div>
     </section>
 
