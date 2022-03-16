@@ -25,7 +25,7 @@
 
         <article class="message is-info">
           <div class="message-header">
-            <p>1分前</p>
+            <p>10秒前</p>
             <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
@@ -39,7 +39,7 @@
             <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
-            <p>1分間で歩いた距離：{{d | round}} km</p>
+            <p>１０秒間で歩いた距離：{{d | round}} km</p>
             <p>合計：{{length | round}} km</p>
           </div>
         </article>
@@ -50,7 +50,7 @@
             <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
-            <p>合計：{{length | round}} kcal</p>
+            <p>合計：{{cal | round}} kcal</p>
           </div>
         </article>
       </div>
@@ -77,7 +77,6 @@ export default {
     
       d: 0,
       length: 0,
-      weight:0,
       cal:0,
     }
   },
@@ -125,6 +124,17 @@ export default {
                 self.lng1 = self.lng2
               }
             );
+            
+            //体重
+            const weight = document.getElementById("weight")
+            const wei = weight.value
+            
+            //カロリー計算
+            cal = cal + (3 × wei × 0.01665 × 1.05)
+            
+            
+            
+            
             const target = document.getElementById("targetCal")
             const value = target.value
             if (value !== "" && value <= length) {
