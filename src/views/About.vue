@@ -39,7 +39,7 @@
             <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
-            <p>合計：{{length | round}} km</p>
+            <p>合計：{{length | round}} </p>
           </div>
         </article>
       </div>
