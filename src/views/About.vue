@@ -1,6 +1,16 @@
 <template>
   <div class="about">
     <section class="section">
+    <p>目標消費カロリー</p>
+    <input type="text" id="targetCal" name="targetCal" required
+       minlength="4" maxlength="8" size="10">
+    <br>
+    <br>
+    <p>体重</p>
+    <input type="text" id="weight" name="weight" required
+       minlength="4" maxlength="8" size="10">
+    <br>
+    <br>
       <div class="container">
         <article class="message is-primary">
           <div class="message-header">
