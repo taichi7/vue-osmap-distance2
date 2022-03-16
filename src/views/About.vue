@@ -3,12 +3,13 @@
     <section class="section">
     <p>目標消費カロリー</p>
     <input type="text" id="targetCal" name="targetCal" required
-       minlength="4" maxlength="8" size="10">
+       minlength="4" maxlength="8" size="10"><b>kcal<b>
+    
     <br>
     <br>
     <p>体重</p>
     <input type="text" id="weight" name="weight" required
-       minlength="4" maxlength="8" size="10">
+       minlength="4" maxlength="8" size="10"><b>kg<b>
     <br>
     <br>
       <div class="container">
@@ -49,7 +50,7 @@
             <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
-            <p>合計：{{length | round}} </p>
+            <p>合計：{{length | round}} kcal</p>
           </div>
         </article>
       </div>
