@@ -125,7 +125,7 @@ export default {
             );
             const target = document.getElementById("targetCal")
             const value = target.value
-            if (value <= length) {
+            if (value !== "" & value <= length) {
               var result = window.confirm('目標達成！！　画面が閉じます。');  
               if( result ) {
                 // 自windowを閉じる
