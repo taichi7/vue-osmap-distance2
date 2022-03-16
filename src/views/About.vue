@@ -36,7 +36,7 @@
     </section>
 
     <footer class="footer">
-      <a href="https://i-doctor.sakura.ne.jp/font/?p=408184">WordPressでフリーオリジナルフォント2</a>
+      <a></a>
     </footer>
 
   </div>
