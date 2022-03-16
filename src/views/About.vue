@@ -77,6 +77,8 @@ export default {
     
       d: 0,
       length: 0,
+      weight:0,
+      cal:0,
     }
   },
   mounted() {
