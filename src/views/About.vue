@@ -137,7 +137,7 @@ export default {
             
             const target = document.getElementById("targetCal")
             const value = target.value
-            if (value !== "" && value <= cal) {
+            if (value !== "" && value <= self.calcal) {
               var result = window.confirm('目標達成！！　画面が閉じます。');  
               if( result ) {
                 // 自windowを閉じる
