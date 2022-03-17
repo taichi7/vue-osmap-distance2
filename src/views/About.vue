@@ -130,7 +130,7 @@ export default {
             const wei = weight.value
             
             //カロリー計算
-            cal = cal + (3 * wei * 0.01665 * 1.05)
+            self.cal = self.cal + (3 * wei * 0.01665 * 1.05)
             
             
             
