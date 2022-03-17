@@ -135,11 +135,24 @@ export default {
             self.minlength = self.minlength + self.length
             
             if (self.mincount == 6) {
-            //カロリー計算
-            self.cal = self.cal + (3 * wei * 0.01665 * 1.05)
             
-            self.mincount = 0
-            self.minlength = 0
+              //カロリー計算           
+                if (70 <= self.minlength < 100) {
+                  //ウォーキング
+                  self.cal = self.cal + (3.5 * wei * 0.01665 * 1.05)
+                }
+                else if(100 <= self.minlength < 200){
+                  //ジョギング
+                  self.cal = self.cal + (9 * wei * 0.01665 * 1.05)
+                }
+                else if(200 <= self.minlength){
+                  //ランニング
+                  self.cal = self.cal + (13 * wei * 0.01665 * 1.05)                
+                }
+                                
+              self.mincount = 0
+              self.minlength = 0
+              
             }
             
             
