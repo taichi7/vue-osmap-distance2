@@ -176,10 +176,10 @@ export default {
                self.minlength = 0
                
                const target = document.getElementById("targetCal")
-               target.value = 0
+               target.value = ""
             
                const weight = document.getElementById("weight")
-               weight.value = 0
+               weight.value = ""
               }
               else {
                //キャンセル時そのまま
