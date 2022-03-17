@@ -100,7 +100,7 @@ export default {
           setInterval(function () {
             console.log('hi');
             calcDistance();
-          }, 5000);
+          }, 10000);
 
           function calcDistance(){
             navigator.geolocation.getCurrentPosition(
@@ -137,7 +137,7 @@ export default {
             
             const target = document.getElementById("targetCal")
             const value = target.value
-            if (value !== "" && value <= length) {
+            if (value !== "" && value <= cal) {
               var result = window.confirm('目標達成！！　画面が閉じます。');  
               if( result ) {
                 // 自windowを閉じる
