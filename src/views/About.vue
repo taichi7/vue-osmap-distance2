@@ -164,9 +164,6 @@ export default {
               var result = window.confirm('目標達成！！初期化します。');  
               if( result ) {
               //初期化
-               self.latitude = 0
-               self.longitude = 0
-
                self.lat1 = 0
                self.lng1 = 0
                self.lat2 = 0
