@@ -46,7 +46,7 @@
         
         <article class="message is-cal">
           <div class="message-header">
-            <p>消費カロリー</p>
+            <p>1分間の消費カロリー</p>
             <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
@@ -78,6 +78,8 @@ export default {
       d: 0,
       length: 0,
       cal:0,
+      mincount:0,
+      minlength:0,
     }
   },
   mounted() {
@@ -129,8 +131,16 @@ export default {
             const weight = document.getElementById("weight")
             const wei = weight.value
             
+            self.mincount = self.mincount + 1
+            self.minlength = self.minlength + self.length
+            
+            if (self.mincount == 6) {
             //カロリー計算
             self.cal = self.cal + (3 * wei * 0.01665 * 1.05)
+            
+            self.mincount = 0
+            self.minlength = 0
+            }
             
             
             
