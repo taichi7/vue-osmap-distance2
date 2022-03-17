@@ -2,13 +2,13 @@
   <div class="about">
     <section class="section">
     <p>目標消費カロリー</p>
-    <input type="text" id="targetCal" name="targetCal" required
+    <input type="number" id="targetCal" name="targetCal" required
        minlength="4" maxlength="8" size="10"><b>kcal<b>
     
     <br>
     <br>
     <p>体重</p>
-    <input type="text" id="weight" name="weight" required
+    <input type="number" id="weight" name="weight" required
        minlength="4" maxlength="8" size="10"><b>kg<b>
     <br>
     <br>
