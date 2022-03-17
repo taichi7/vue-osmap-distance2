@@ -160,19 +160,32 @@ export default {
             
             const target = document.getElementById("targetCal")
             const value = target.value
-            if (value !== "" && value <= self.calcal) {
-              var result = window.confirm('目標達成！！　画面が閉じます。');  
+            if (value !== "" && value <= self.cal) {
+              var result = window.confirm('目標達成！！初期化します。');  
               if( result ) {
-                // 自windowを閉じる
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　function winClose(){
-  　　　　　　　　　　　　　　　　　　　　　　　　　　　　open('about:blank', '_self').close();    //一度再表示してからClose
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　};
+              //初期化
+               self.latitude = 0
+               self.longitude = 0
+
+               self.lat1 = 0
+               self.lng1 = 0
+               self.lat2 = 0
+               self.lng2 = 0
+    
+               self.d = 0
+               self.length = 0
+               self.cal = 0
+               self.mincount =0
+               self.minlength = 0
+               
+               const target = document.getElementById("targetCal")
+               target.value = 0
+            
+               const weight = document.getElementById("weight")
+               weight.value = 0
               }
               else {
-                // 自windowを閉じる
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　function winClose(){
-  　　　　　　　　　　　　　　　　　　　　　　　　　　　　open('about:blank', '_self').close();    //一度再表示してからClose
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　};
+               //キャンセル時そのまま
               }
             }
           }
