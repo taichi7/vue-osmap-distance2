@@ -12,6 +12,10 @@
        minlength="4" maxlength="8" size="10"><b>kg<b>
     <br>
     <br>
+    <button class="start buttton"type="button">消費開始</button>
+    <button class="stop button"type="button">休憩</button>
+    <br>
+    <br>
       <div class="container">
         <article class="message is-primary">
           <div class="message-header">
