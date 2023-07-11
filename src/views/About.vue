@@ -111,7 +111,7 @@ export default {
     }
   },
 
-  btnStart.addEventListener('click', function(event){
+  document.getElementById('btnStart').addEventListener('click', function(event){
     //10秒毎にcalcDistance関数を実行する
     const timerId = setInterval(function () {
       calcDistance();
