@@ -13,8 +13,8 @@
     <br>
     <br>
     <div>
-     <input type="button" id="btnStart" value="消費開始">
-     <input type="button" id="btnStop" value="休憩">
+      <button v-on:click="calStart">移動開始</button>
+      <button v-on:click="calStop">休憩</button>
     </div>
     <br>
     <br>
@@ -110,96 +110,96 @@ export default {
       console.log("error");
     }
   },
+  methods: {
+      calStart: function () {
+        //10秒毎にcalcDistance関数を実行する
+        const timerId = setInterval(function () {
+          calcDistance();
+        }, 10000);
+      },
+      calStop: function () {
+        //カロリー計算処理停止
 
-  var btnStart = document.getElementById('btnStart');
-  btnStart.getElementById('btnStart').addEventListener('click', function(event){
-    //10秒毎にcalcDistance関数を実行する
-    const timerId = setInterval(function () {
-      calcDistance();
-    }, 10000);
-  });
-  
 
-  function calcDistance(){
-    //移動距離取得
-    navigator.geolocation.getCurrentPosition(
-      function(position) { 
-        elf.lat2 = position.coords.latitude;
-        elf.lng2 = position.coords.longitude;
+      },
+      calcDistance: function () {
+        //移動距離取得
+        navigator.geolocation.getCurrentPosition(
+          function(position) { 
+            lf.lat2 = position.coords.latitude;
+            elf.lng2 = position.coords.longitude;
 
-        self.d = distance(self.lat1, self.lng1, self.lat2, self.lng2)
-        self.length = self.length + self.d
+            self.d = distance(self.lat1, self.lng1, self.lat2, self.lng2)
+            self.length = self.length + self.d
 
-        self.lat1 = self.lat2
-        self.lng1 = self.lng2
-      }
-    );
-            
-    //体重
-    const weight = document.getElementById("weight")
-    const wei = weight.value
-            
-    self.mincount = self.mincount + 1
-    self.minlength = self.minlength + self.length            
-    if (self.mincount == 6) {
-            
-        //カロリー計算           
-        if (70 <= self.minlength < 100) {
-          //ウォーキング
-          self.cal = self.cal + (3.5 * wei * 0.01665 * 1.05)
-        }
-        else if(100 <= self.minlength < 200){
-           //ジョギング
-           self.cal = self.cal + (9 * wei * 0.01665 * 1.05)
-        }
-        else if(200 <= self.minlength){
-          //ランニング
-          self.cal = self.cal + (13 * wei * 0.01665 * 1.05)                
-        }
-                                
-       self.mincount = 0
-        self.minlength = 0
-              
-    }
-                       
-            
-    const target = document.getElementById("targetCal")
-    const value = target.value
-    if (value !== "" && value <= self.cal) {
-      var result = window.confirm('目標達成！！初期化します。');  
-      if( result ) {
-      //初期化
-        self.lat1 = 0
-        self.lng1 = 0
-        self.lat2 = 0
-        self.lng2 = 0
-    
-        self.d = 0
-        self.length = 0
-        self.cal = 0
-        self.mincount =0
-        self.minlength = 0
-               
-        const target = document.getElementById("targetCal")
-        target.value = ""
-            
+            self.lat1 = self.lat2
+            self.lng1 = self.lng2
+          }
+        );
+
+        //カロリー計算
         const weight = document.getElementById("weight")
-        weight.value = ""
-      }
-      else {
-        //キャンセル時そのまま
-      }
-    }
-  }
- 
-  function distance(lat1, lng1, lat2, lng2) {
-    lat1 *= Math.PI / 180;
-    lng1 *= Math.PI / 180;
-    lat2 *= Math.PI / 180;
-    lng2 *= Math.PI / 180;
-    return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
-  }
+        const wei = weight.value //体重           
+        self.mincount = self.mincount + 1
+        self.minlength = self.minlength + self.length            
+        if (self.mincount == 6) {                   
+            if (70 <= self.minlength < 100) {
+              //ウォーキング
+              self.cal = self.cal + (3.5 * wei * 0.01665 * 1.05)
+            }
+            else if(100 <= self.minlength < 200){
+             //ジョギング
+             self.cal = self.cal + (9 * wei * 0.01665 * 1.05)
+            }
+            else if(200 <= self.minlength){
+              //ランニング
+              self.cal = self.cal + (13 * wei * 0.01665 * 1.05)                
+            }
+                                
+            self.mincount = 0
+            self.minlength = 0            
+        }
+                              
+        //終了処理
+        const target = document.getElementById("targetCal")
+        const value = target.value
+        if (value !== "" && value <= self.cal) {
+          var result = window.confirm('目標達成！！初期化します。');  
+          if( result ) {
+            //初期化
+            self.lat1 = 0
+            self.lng1 = 0
+            self.lat2 = 0
+            self.lng2 = 0
+    
+            self.d = 0
+            self.length = 0
+            self.cal = 0
+            self.mincount =0
+            self.minlength = 0
+               
+            const target = document.getElementById("targetCal")
+            target.value = ""
+            
+            const weight = document.getElementById("weight")
+            weight.value = ""
+          }
+          else {
+            //キャンセル時そのまま
+          }
+        }
+      },
+      distance: function (lat1, lng1, lat2, lng2) {
+        //2点間の距離を取得
+        lat1 *= Math.PI / 180;
+        lng1 *= Math.PI / 180;
+        lat2 *= Math.PI / 180;
+        lng2 *= Math.PI / 180;
+        return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
+      },
 
+  },
+  
   filters: {
     // 小数点以下を第3位に丸めるフィルタ
     round: function (val) {
