@@ -3,13 +3,13 @@
     <section class="section">
     <p>目標消費カロリー</p>
     <input type="number" id="targetCal" name="targetCal" required
-       minlength="4" maxlength="8" size="10"><b>kcal<b>
+       minlength="4" maxlength="8" size="10"><b>kcal</b>
     
     <br>
     <br>
     <p>体重</p>
     <input type="number" id="weight" name="weight" required
-       minlength="4" maxlength="8" size="10"><b>kg<b>
+       minlength="4" maxlength="8" size="10"><b>kg</b>
     <br>
     <br>
     <div>
@@ -25,7 +25,7 @@
             <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
-            <p>緯度：{{lat2 | round}} 　 経度：{{lat2 | round}}</p>
+            <p>緯度：{{lat2 | round}}   経度：{{lat2 | round}}</p>
           </div>
         </article>
 
@@ -35,7 +35,7 @@
             <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
-            <p>緯度：{{lat1 | round}} 　 経度：{{lng1 | round}}</p>
+            <p>緯度：{{lat1 | round}}   経度：{{lng1 | round}}</p>
           </div>
         </article>
 
@@ -86,23 +86,24 @@ export default {
       cal:0,
       mincount:0,
       minlength:0,
+
+      isExecuteCal:false
     }
   },
   mounted() {
+    // thisをselfという変数に代入して固定する
+    //const self = this;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         function(position){
           let coords = position.coords;
           // 初期現在位置取得
           this.lat1 = coords.latitude;
-          this.lng1 = coords.longitude;
-
-          // thisをselfという変数に代入して固定する
-          const self = this;  
+          this.lng1 = coords.longitude;  
         }.bind(this),
         function(error) {
           // エラー処理を書く
-          console.log("error");
+          console.log(error);
         }
       );
     } else {
@@ -111,72 +112,69 @@ export default {
     }
   },
   methods: {
-      calStart: function () {
-        //10秒毎にcalcDistance関数を実行する
-        const timerId = setInterval(function () {
-          calcDistance();
-        }, 10000);
-      },
-      calStop: function () {
-        //カロリー計算処理停止
-
-
+      distance: function (lat1, lng1, lat2, lng2) {
+        //2点間の距離を取得
+        lat1 *= Math.PI / 180;
+        lng1 *= Math.PI / 180;
+        lat2 *= Math.PI / 180;
+        lng2 *= Math.PI / 180;
+        return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
       },
       calcDistance: function () {
         //移動距離取得
         navigator.geolocation.getCurrentPosition(
           function(position) { 
-            lf.lat2 = position.coords.latitude;
-            elf.lng2 = position.coords.longitude;
+            this.lat2 = position.coords.latitude;
+            this.lng2 = position.coords.longitude;
 
-            self.d = distance(self.lat1, self.lng1, self.lat2, self.lng2)
-            self.length = self.length + self.d
+            this.d = distance(this.lat1, this.lng1, this.lat2, this.lng2)
+            this.length = this.length + this.d
 
-            self.lat1 = self.lat2
-            self.lng1 = self.lng2
+            this.lat1 = this.lat2
+            this.lng1 = this.lng2
           }
         );
 
         //カロリー計算
         const weight = document.getElementById("weight")
         const wei = weight.value //体重           
-        self.mincount = self.mincount + 1
-        self.minlength = self.minlength + self.length            
-        if (self.mincount == 6) {                   
-            if (70 <= self.minlength < 100) {
+        this.mincount = this.mincount + 1
+        this.minlength = this.minlength + this.length            
+        if (this.mincount == 6) {                   
+            if (70 <= this.minlength < 100) {
               //ウォーキング
-              self.cal = self.cal + (3.5 * wei * 0.01665 * 1.05)
+              this.cal = this.cal + (3.5 * wei * 0.01665 * 1.05)
             }
-            else if(100 <= self.minlength < 200){
+            else if(100 <= this.minlength < 200){
              //ジョギング
-             self.cal = self.cal + (9 * wei * 0.01665 * 1.05)
+             this.cal = this.cal + (9 * wei * 0.01665 * 1.05)
             }
-            else if(200 <= self.minlength){
+            else if(200 <= this.minlength){
               //ランニング
-              self.cal = self.cal + (13 * wei * 0.01665 * 1.05)                
+              this.cal = this.cal + (13 * wei * 0.01665 * 1.05)                
             }
                                 
-            self.mincount = 0
-            self.minlength = 0            
+            this.mincount = 0
+            this.minlength = 0            
         }
                               
         //終了処理
         const target = document.getElementById("targetCal")
         const value = target.value
-        if (value !== "" && value <= self.cal) {
+        if (value !== "" && value <= this.cal) {
           var result = window.confirm('目標達成！！初期化します。');  
           if( result ) {
             //初期化
-            self.lat1 = 0
-            self.lng1 = 0
-            self.lat2 = 0
-            self.lng2 = 0
+            this.lat1 = 0
+            this.lng1 = 0
+            this.lat2 = 0
+            this.lng2 = 0
     
-            self.d = 0
-            self.length = 0
-            self.cal = 0
-            self.mincount =0
-            self.minlength = 0
+            this.d = 0
+            this.length = 0
+            this.cal = 0
+            this.mincount =0
+            this.minlength = 0
                
             const target = document.getElementById("targetCal")
             target.value = ""
@@ -189,13 +187,19 @@ export default {
           }
         }
       },
-      distance: function (lat1, lng1, lat2, lng2) {
-        //2点間の距離を取得
-        lat1 *= Math.PI / 180;
-        lng1 *= Math.PI / 180;
-        lat2 *= Math.PI / 180;
-        lng2 *= Math.PI / 180;
-        return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
+      calStart: function () {
+        //10秒毎にcalcDistance関数を実行する
+        this.isExecuteCal = true;
+        const intervalId = setInterval(function () {
+          if(this.isExecuteCal == false){
+            clearInterval(intervalId);
+          }
+          calcDistance();
+        }, 10000);
+      },
+      calStop: function () {
+        //カロリー計算処理停止
+        this.isExecuteCal = false;
       },
 
   },
