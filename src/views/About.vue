@@ -127,7 +127,7 @@ export default {
             this.lat2 = position.coords.latitude;
             this.lng2 = position.coords.longitude;
 
-            this.d = distance(this.lat1, this.lng1, this.lat2, this.lng2)
+            this.d = this.distance(this.lat1, this.lng1, this.lat2, this.lng2)
             this.length = this.length + this.d
 
             this.lat1 = this.lat2
@@ -194,7 +194,7 @@ export default {
           if(this.isExecuteCal == false){
             clearInterval(intervalId);
           }
-          calcDistance();
+          this.calcDistance();
         }, 10000);
       },
       calStop: function () {

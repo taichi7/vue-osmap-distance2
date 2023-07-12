@@ -1,17 +1,20 @@
 <template>
-  <div id="app">
-    <nav class="navbar has-background-info">
-      <div class="navbar-brand">
-        <a class="navbar-item has-text-white" href="https://i-doctor.sakura.ne.jp/font/?p=40818"> Vue OpenStreetMap Distance </a>
+  <amplify-authenticator>
+    <div id="app">
+      <nav class="navbar has-background-info">
+        <div class="navbar-brand">
+          <a class="navbar-item has-text-white" href="https://i-doctor.sakura.ne.jp/font/?p=40818"> Vue OpenStreetMap Distance </a>
+        </div>
+      </nav>
+      <div id="nav">
+        <router-link to="/">Map</router-link>
+        <span> | </span>
+        <router-link to="/about">Distance</router-link>
       </div>
-    </nav>
-    <div id="nav">
-      <router-link to="/">Map</router-link>
-      <span> | </span>
-      <router-link to="/about">Distance</router-link>
+      <router-view/>
+      <amplify-sign-out></amplify-sign-out>
     </div>
-    <router-view/>
-  </div>
+  </amplify-authenticator>
 </template>
 
 <style>
