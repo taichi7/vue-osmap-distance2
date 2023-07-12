@@ -20,8 +20,8 @@ export default {
     // データソースはOpenStreetMap
     const map = L.map("mapid").addLayer(
       L.tileLayer("https://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-    		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '
-    	})
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '
+      })
     );
     // 位置情報検索
     setInterval(() => {
