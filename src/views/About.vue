@@ -184,7 +184,7 @@ export default {
       const target = document.getElementById("targetCal")
       const value = target.value
       if (value !== "" && value <= self.cal) {
-        var result = window.confirm('目標達成！！初期化しますか？');  
+        var result = window.confirm('目標達成！初期化しますか？');  
         if( result ) {
           //初期化
           self.lat1 = 0
