@@ -3,13 +3,11 @@
     <div id="app">
       <nav class="navbar has-background-info">
         <div class="navbar-brand">
-          <a class="navbar-item has-text-white" href="https://i-doctor.sakura.ne.jp/font/?p=40818"> Vue OpenStreetMap Distance </a>
+          <a class="navbar-item has-text-white" href = "/about#/about"> カロリー計算アプリ </a>
         </div>
       </nav>
       <div id="nav">
-        <router-link to="/">Map</router-link>
-        <span> | </span>
-        <router-link to="/about">Distance</router-link>
+        <router-link to="/">　　　　　　　　　　　　　　　　　　　　　　　(Map)</router-link>
       </div>
       <router-view/>
       <amplify-sign-out></amplify-sign-out>
@@ -37,5 +35,6 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+  text-align: right;
 }
 </style>

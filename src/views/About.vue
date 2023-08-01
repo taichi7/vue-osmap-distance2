@@ -18,48 +18,27 @@
     </div>
     <br>
     <br>
-      <div class="container">
+      <div class="container">                
         <article class="message is-primary">
           <div class="message-header">
-            <p>現在地</p>
-            <button class="delete" aria-label="delete"></button>
-          </div>
-          <div class="message-body">
-            <p>緯度：{{lat2}}   経度：{{lng2}}</p>
-          </div>
-        </article>
-
-        <article class="message is-info">
-          <div class="message-header">
-            <p>10秒前</p>
-            <button class="delete" aria-label="delete"></button>
-          </div>
-          <div class="message-body">
-            <p>緯度：{{lat1}}   経度：{{lng1}}</p>
-          </div>
-        </article>
-
-        <article class="message is-dark">
-          <div class="message-header">
-            <p>歩いた距離</p>
-            <button class="delete" aria-label="delete"></button>
-          </div>
-          <div class="message-body">
-            <p>１０秒間で歩いた距離：{{dist}} km</p>
-            <p>合計：{{totalDist}} km</p>
-          </div>
-        </article>
-        
-        <article class="message is-cal">
-          <div class="message-header">
             <p>消費カロリー</p>
-            <button class="delete" aria-label="delete"></button>
           </div>
           <div class="message-body">
             <p>合計：{{cal}} kcal</p>
           </div>
         </article>
       </div>
+      <br>
+      <br>
+      <p>-----------移動距離詳細----------------</p><br>
+      <p>＜現在地＞</p><br>
+      <p>緯度：{{lat2}}   経度：{{lng2}}</p><br>
+      <p>＜10秒前の地点＞</p><br>
+      <p>緯度：{{lat1}}   経度：{{lng1}}</p><br>
+      <p>＜歩いた距離＞</p><br>
+      <p>１０秒間で歩いた距離：{{dist}} km</p><br>
+      <p>合計：{{totalDist}} km</p><br>
+      <p>-----------------------------------------</p><br>
     </section>
 
     <footer class="footer">
