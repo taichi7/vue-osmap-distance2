@@ -71,9 +71,12 @@
 
 <script>
 import  axios from 'axios' 
+import { Auth } from 'aws-amplify';
 export default {
   data() {
     return {
+      loginUserName:"",
+
       lat1: 0,
       lng1: 0,
       lat2: 0,
@@ -87,6 +90,10 @@ export default {
     }
   },
   mounted() {
+    //起動時処理
+    //--ユーザー情報取得
+    const userInfo = this.currentAuthenticatedUser();
+    this.loginUserName = userInfo.username
    //if (navigator.geolocation) {
       //navigator.geolocation.getCurrentPosition(
         //function(position){
@@ -105,6 +112,17 @@ export default {
     //}
   },
   methods: {
+    currentAuthenticatedUser:async function () {
+      try {
+        const user = await Auth.currentAuthenticatedUser({
+          bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+        });
+        return user;
+      } catch(err) {
+        console.log(err);
+      }
+    },
+   
     calStart: function () {
       if (navigator.geolocation) {
         alert( "カロリー消費計算を開始します。" )
@@ -146,7 +164,7 @@ export default {
     requestServerPost: function(){ 
       return new Promise((resolve, reject) => { 
         axios 
-          .post( "https://yczy45r8sl.execute-api.us-east-1.amazonaws.com/202307261800", {cal: this.cal}) 
+          .post( "https://yczy45r8sl.execute-api.us-east-1.amazonaws.com/202307261800", {username:this.loginUserName,cal: this.cal}) 
           .then(response => { 
              resolve(response.data) 
           }).catch(error => { 
