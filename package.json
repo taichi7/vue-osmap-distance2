@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
+    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@aws-amplify/ui-components": "^1.9.40",
     "aws-amplify": "^5.3.3",
+    "axios": "^1.4.0",
     "bulma": "^0.7.5",
     "core-js": "^2.6.5",
     "leaflet": "^1.5.1",

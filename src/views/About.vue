@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import  axios from 'axios' 
 export default {
   data() {
     return {
@@ -134,11 +135,27 @@ export default {
       }
     },
 
-    calStop: function () {
+    calStop: async function () {
       //カロリー計算処理停止
+      var response = await this.requestServerPost()
+      console.log(response)
       alert( "カロリー消費計算を停止します。" )
       this.isExecuteCal = false;
     },
+
+    requestServerPost: function(){ 
+      return new Promise((resolve, reject) => { 
+        axios 
+          .post( "https://yczy45r8sl.execute-api.us-east-1.amazonaws.com/202307261800", {cal: this.cal}) 
+          .then(response => { 
+             resolve(response.data) 
+          }).catch(error => { 
+              reject(error) 
+          }) 
+      }).catch((e) => { 
+        throw e 
+      }) 
+    },   
 
     calcDistance: function (self) {
       //移動距離取得
