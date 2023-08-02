@@ -24,7 +24,7 @@
             <p>本日の消費カロリー</p>
           </div>
           <div class="message-body">
-            <p>{{cal}} kcal / {{this.targetCal}} kcal</p>
+            <p>{{cal}} kcal / {{targetCal}} kcal</p>
           </div>
         </article>
       </div>
@@ -32,29 +32,27 @@
       <br>
     </section>
 
+    <div class="distance-detail">
+      -------------移動距離詳細--------------<br>
+
+      ＜現在地＞<br>
+      緯度：{{lat2}}   経度：{{lng2}}<br>
+      ＜10秒前の地点＞<br>
+      緯度：{{lat1}}   経度：{{lng1}}<br>
+      ＜歩いた距離＞<br>
+      １０秒間：{{dist}} km<br>
+      合計：{{totalDist}} km<br>
+      ＜username＞<br>
+      {{loginUserName}} <br>
+      -----------------------------------------<br>
+    </div>
+
     <footer class="footer">
       <a></a>
     </footer>
 
   </div>
 </template>
-<div class="distance-detail">
-  -------------移動距離詳細--------------<br>
-  ＜現在地＞<br>
-  緯度：{{lat2}}   経度：{{lng2}}<br>
-  ＜10秒前の地点＞<br>
-  緯度：{{lat1}}   経度：{{lng1}}<br>
-  ＜歩いた距離＞<br>
-  １０秒間で歩いた距離：{{dist}} km<br>
-  合計：{{totalDist}} km<br>
-  -----------------------------------------<br>
-</div>
-
-<style>
-#distance-detail {
-  text-align: left;
-}
-</style>
 
 <script>
 import  axios from 'axios' 
@@ -79,14 +77,16 @@ export default {
     }
   },
   mounted() {
-    //起動時処理
-    //--ユーザー情報取得
-    const userInfo = this.currentAuthenticatedUser().username;
-    this.loginUserName = userInfo.username
-    console.log(userInfo)
+      //ユーザー情報取得
+      this.currentAuthenticatedUser();
 
-    //--目標消費カロリーと現在の消費カロリーを取得
-    this.targetCal = 9999
+      window.onload = ()=>{
+        //目標消費カロリーと現在の消費カロリーを取得
+
+
+        this.targetCal = 9999
+        this.cal = 100
+      }
    //if (navigator.geolocation) {
       //navigator.geolocation.getCurrentPosition(
         //function(position){
@@ -103,6 +103,7 @@ export default {
       // エラー処理を書く
       //console.log("error");
     //}
+    
   },
   methods: {
     currentAuthenticatedUser:async function () {
@@ -110,7 +111,7 @@ export default {
         const user = await Auth.currentAuthenticatedUser({
           bypassCache: false // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
         });
-        return user;
+        this.loginUserName = user.username
       } catch(err) {
         console.log(err);
       }
@@ -119,7 +120,6 @@ export default {
     calStart: function () {
       if (navigator.geolocation) {
         alert( "カロリー消費計算を開始します。" )
-
         // thisをselfという変数に代入して固定する
         const self = this;
         
@@ -148,16 +148,30 @@ export default {
 
     calStop: async function () {
       //カロリー計算処理停止
-      var response = await this.requestServerPost()
+      var response = await this.requestServerPostForBurnCal()
       console.log(response)
       alert( "カロリー消費計算を停止します。" )
       this.isExecuteCal = false;
     },
 
-    requestServerPost: function(){ 
+    requestServerPostForBurnCal: function(){ 
       return new Promise((resolve, reject) => { 
         axios 
           .post( "https://yczy45r8sl.execute-api.us-east-1.amazonaws.com/202307261800", {username:this.loginUserName,cal: this.cal}) 
+          .then(response => { 
+             resolve(response.data) 
+          }).catch(error => { 
+              reject(error) 
+          }) 
+      }).catch((e) => { 
+        throw e 
+      }) 
+    },
+    
+    requestServerGetForCalInfo: function(){ 
+      return new Promise((resolve, reject) => { 
+        axios 
+          .get( "https://yczy45r8sl.execute-api.us-east-1.amazonaws.com/202307261800") 
           .then(response => { 
              resolve(response.data) 
           }).catch(error => { 

@@ -26,11 +26,12 @@
 
 #nav {
   padding: 2px;
+  text-align: right;
 }
 
 #nav a {
   font-weight: bold;
-  color: #2c3e50;
+  color: #acb2b8;
 }
 
 #nav a.router-link-exact-active {
