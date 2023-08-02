@@ -21,24 +21,15 @@
       <div class="container">                
         <article class="message is-primary">
           <div class="message-header">
-            <p>消費カロリー</p>
+            <p>本日の消費カロリー</p>
           </div>
           <div class="message-body">
-            <p>合計：{{cal}} kcal</p>
+            <p>{{cal}} kcal / {{this.targetCal}} kcal</p>
           </div>
         </article>
       </div>
       <br>
       <br>
-      <p>-----------移動距離詳細----------------</p><br>
-      <p>＜現在地＞</p><br>
-      <p>緯度：{{lat2}}   経度：{{lng2}}</p><br>
-      <p>＜10秒前の地点＞</p><br>
-      <p>緯度：{{lat1}}   経度：{{lng1}}</p><br>
-      <p>＜歩いた距離＞</p><br>
-      <p>１０秒間で歩いた距離：{{dist}} km</p><br>
-      <p>合計：{{totalDist}} km</p><br>
-      <p>-----------------------------------------</p><br>
     </section>
 
     <footer class="footer">
@@ -47,6 +38,23 @@
 
   </div>
 </template>
+<div class="distance-detail">
+  -------------移動距離詳細--------------<br>
+  ＜現在地＞<br>
+  緯度：{{lat2}}   経度：{{lng2}}<br>
+  ＜10秒前の地点＞<br>
+  緯度：{{lat1}}   経度：{{lng1}}<br>
+  ＜歩いた距離＞<br>
+  １０秒間で歩いた距離：{{dist}} km<br>
+  合計：{{totalDist}} km<br>
+  -----------------------------------------<br>
+</div>
+
+<style>
+#distance-detail {
+  text-align: left;
+}
+</style>
 
 <script>
 import  axios from 'axios' 
@@ -55,6 +63,8 @@ export default {
   data() {
     return {
       loginUserName:"",
+
+      targetCal:0,
 
       lat1: 0,
       lng1: 0,
@@ -71,8 +81,12 @@ export default {
   mounted() {
     //起動時処理
     //--ユーザー情報取得
-    const userInfo = this.currentAuthenticatedUser();
+    const userInfo = this.currentAuthenticatedUser().username;
     this.loginUserName = userInfo.username
+    console.log(userInfo)
+
+    //--目標消費カロリーと現在の消費カロリーを取得
+    this.targetCal = 9999
    //if (navigator.geolocation) {
       //navigator.geolocation.getCurrentPosition(
         //function(position){

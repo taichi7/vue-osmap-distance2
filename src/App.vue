@@ -3,11 +3,11 @@
     <div id="app">
       <nav class="navbar has-background-info">
         <div class="navbar-brand">
-          <a class="navbar-item has-text-white" href = "/about#/about"> カロリー計算アプリ </a>
+          <router-link class="navbar-item has-text-white" to = "/"> カロリー計算アプリ </router-link>
         </div>
       </nav>
       <div id="nav">
-        <router-link to="/">　　　　　　　　　　　　　　　　　　　　　　　(Map)</router-link>
+        <router-link to="/Map">(Map)</router-link>
       </div>
       <router-view/>
       <amplify-sign-out></amplify-sign-out>
@@ -35,6 +35,5 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
-  text-align: right;
 }
 </style>
