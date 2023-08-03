@@ -1,12 +1,10 @@
 <template>
   <div class="about">
-    <section class="section">
     <div>
-      <button style="margin-left: 10px;,text-align: left: ;;" v-on:click="calStart">消費開始</button>
+      <button style="margin-left: 10px;,text-align: left;" v-on:click="calStart">消費開始</button>
       <button style="margin: 10px;" v-on:click="calStop">休憩</button>
     </div>
-    <br>
-    <br>
+    <section class="section">
       <div class="container">                
         <article class="message is-primary">
           <div class="message-header">
@@ -17,8 +15,10 @@
           </div>
         </article>
       </div>
-      <br>
-      <br>
+      <div class="regist-food">
+        <input type="File" @change="fileSelected"><br>
+        <button @click = "upload">選択したファイルの解析</button>
+      </div>
     </section>
 
     <div class="distance-detail">
@@ -46,6 +46,10 @@
   </div>
 </template>
 
+<style>
+
+</style>
+
 <script>
 import  axios from 'axios' 
 import { Auth } from 'aws-amplify';
@@ -55,6 +59,8 @@ export default {
       loginUserName:"",
 
       targetCal:0,
+
+      selectedFoodFile:null,
 
       lat1: 0,
       lng1: 0,
@@ -75,7 +81,7 @@ export default {
       window.onload = ()=>{
         //目標消費カロリーと現在の消費カロリーを取得
         var response = this.requestServerGetcalinfo()
-      　console.log(response)
+       console.log(response)
 
         this.targetCal = 9999
         this.cal = 100
@@ -115,6 +121,23 @@ export default {
         throw e 
       }) 
     },   
+
+    //--画像解析
+    requestServerCallComputerVision: function(){ 
+      const path = "https://rkcig8hh37.execute-api.us-east-1.amazonaws.com/v1"
+      const requestbody = this.selectedFoodFile.data
+      return new Promise((resolve, reject) => { 
+        axios 
+          .post(path, requestbody) 
+          .then(response => { 
+             resolve(response.data) 
+          }).catch(error => { 
+              reject(error) 
+          }) 
+      }).catch((e) => { 
+        throw e 
+      }) 
+    },
 
     currentAuthenticatedUser:async function () {
       try {
@@ -162,6 +185,17 @@ export default {
       console.log(response)
       alert( "カロリー消費計算を停止します。" )
       this.isExecuteCal = false;
+    },
+
+    fileSelected: function (event) {
+      this.selectedFoodFile = event.target.files[0]
+      console.log(this.selectedFoodFile)
+    },
+    registFood: function () {
+      console.log(this.selectedFoodFile)
+      var response = this.requestServerCallComputerVision()
+      console.log(response)
+
     },
 
     calcDistance: function (self) {
