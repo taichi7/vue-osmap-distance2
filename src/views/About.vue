@@ -74,30 +74,45 @@ export default {
 
       window.onload = ()=>{
         //目標消費カロリーと現在の消費カロリーを取得
-
+        var response = this.requestServerGetForCalInfo()
+      　console.log(response)
 
         this.targetCal = 9999
         this.cal = 100
-      }
-   //if (navigator.geolocation) {
-      //navigator.geolocation.getCurrentPosition(
-        //function(position){
-          // 初期現在位置表示
-          //this.lat2 = position.coords.latitude;
-          //this.lng2 = position.coords.longitude;  
-        //}.bind(this),
-        //function(error) {
-          // エラー処理を書く
-          //console.log(error);
-        //}
-      //);
-    //} else {
-      // エラー処理を書く
-      //console.log("error");
-    //}
-    
+      }    
   },
   methods: {
+    //API実行メソッド
+    //--消費カロリー登録
+    requestServerPostForBurnCal: function(){ 
+      return new Promise((resolve, reject) => { 
+        axios 
+          .post( "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/registburncal", {username:this.loginUserName,cal: this.cal}) 
+          .then(response => { 
+             resolve(response.data) 
+          }).catch(error => { 
+              reject(error) 
+          }) 
+      }).catch((e) => { 
+        throw e 
+      }) 
+    },
+    
+    //--カロリー情報取得
+    requestServerGetForCalInfo: function(){ 
+      return new Promise((resolve, reject) => { 
+        axios 
+          .get( "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/getcalinfo") 
+          .then(response => { 
+             resolve(response.data) 
+          }).catch(error => { 
+              reject(error) 
+          }) 
+      }).catch((e) => { 
+        throw e 
+      }) 
+    },   
+
     currentAuthenticatedUser:async function () {
       try {
         const user = await Auth.currentAuthenticatedUser({
@@ -145,34 +160,6 @@ export default {
       alert( "カロリー消費計算を停止します。" )
       this.isExecuteCal = false;
     },
-
-    requestServerPostForBurnCal: function(){ 
-      return new Promise((resolve, reject) => { 
-        axios 
-          .post( "https://yczy45r8sl.execute-api.us-east-1.amazonaws.com/202307261800", {username:this.loginUserName,cal: this.cal}) 
-          .then(response => { 
-             resolve(response.data) 
-          }).catch(error => { 
-              reject(error) 
-          }) 
-      }).catch((e) => { 
-        throw e 
-      }) 
-    },
-    
-    requestServerGetForCalInfo: function(){ 
-      return new Promise((resolve, reject) => { 
-        axios 
-          .get( "https://yczy45r8sl.execute-api.us-east-1.amazonaws.com/202307261800") 
-          .then(response => { 
-             resolve(response.data) 
-          }).catch(error => { 
-              reject(error) 
-          }) 
-      }).catch((e) => { 
-        throw e 
-      }) 
-    },   
 
     calcDistance: function (self) {
       //移動距離取得
