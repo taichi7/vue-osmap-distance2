@@ -1,20 +1,9 @@
 <template>
   <div class="about">
     <section class="section">
-    <p>目標消費カロリー</p>
-    <input type="number" id="targetCal" name="targetCal" required
-       minlength="4" maxlength="8" size="10"><b>kcal</b>
-    
-    <br>
-    <br>
-    <p>体重</p>
-    <input type="number" id="weight" name="weight" required
-       minlength="4" maxlength="8" size="10"><b>kg</b>
-    <br>
-    <br>
     <div>
-      <button v-on:click="calStart">移動開始</button>
-      <button v-on:click="calStop">休憩</button>
+      <button style="margin-left: 10px;,text-align: left: ;;" v-on:click="calStart">消費開始</button>
+      <button style="margin: 10px;" v-on:click="calStop">休憩</button>
     </div>
     <br>
     <br>
@@ -44,6 +33,9 @@
       合計：{{totalDist}} km<br>
       ＜username＞<br>
       {{loginUserName}} <br>
+      <p>体重</p>
+    <input type="number" id="weight" name="weight" required
+       minlength="4" maxlength="8" size="10"><b>kg</b><br>
       -----------------------------------------<br>
     </div>
 
@@ -223,9 +215,7 @@ export default {
       }
                                                                    
       //終了処理
-      const target = document.getElementById("targetCal")
-      const value = target.value
-      if (value !== "" && value <= self.cal) {
+      if (self.targetCal !== "" && self.targetCal <= self.cal) {
         var result = window.confirm('目標達成！初期化しますか？');  
         if( result ) {
           //初期化
