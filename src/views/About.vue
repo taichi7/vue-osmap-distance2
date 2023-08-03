@@ -74,7 +74,7 @@ export default {
 
       window.onload = ()=>{
         //目標消費カロリーと現在の消費カロリーを取得
-        var response = this.requestServerGetForCalInfo()
+        var response = this.requestServerGetcalinfo()
       　console.log(response)
 
         this.targetCal = 9999
@@ -84,10 +84,12 @@ export default {
   methods: {
     //API実行メソッド
     //--消費カロリー登録
-    requestServerPostForBurnCal: function(){ 
+    requestServerRegistburncal: function(){ 
+      const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/registburncal"
+      const requestbody = {username:this.loginUserName,cal: this.cal}
       return new Promise((resolve, reject) => { 
         axios 
-          .post( "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/registburncal", {username:this.loginUserName,cal: this.cal}) 
+          .post(path, requestbody) 
           .then(response => { 
              resolve(response.data) 
           }).catch(error => { 
@@ -99,10 +101,11 @@ export default {
     },
     
     //--カロリー情報取得
-    requestServerGetForCalInfo: function(){ 
+    requestServerGetcalinfo: function(){ 
+      const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/getcalinfo" + "?username=" + this.loginUserName
       return new Promise((resolve, reject) => { 
         axios 
-          .get( "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/getcalinfo") 
+          .get(path) 
           .then(response => { 
              resolve(response.data) 
           }).catch(error => { 
@@ -155,7 +158,7 @@ export default {
 
     calStop: async function () {
       //カロリー計算処理停止
-      var response = await this.requestServerPostForBurnCal()
+      var response = await this.requestServerRegistburncal()
       console.log(response)
       alert( "カロリー消費計算を停止します。" )
       this.isExecuteCal = false;
