@@ -78,14 +78,14 @@ export default {
       //ユーザー情報取得
       this.currentAuthenticatedUser();
 
-      window.onload = ()=>{
+      //window.onload = ()=>{
         //目標消費カロリーと現在の消費カロリーを取得
         var response = this.requestServerGetcalinfo()
        console.log(response)
 
         this.targetCal = 9999
         this.cal = 100
-      }    
+      //}    
   },
   methods: {
     //API実行メソッド
