@@ -17,7 +17,7 @@
       </div>
       <div class="regist-food">
         <input type="File" @change="fileSelected"><br>
-        <button @click = "upload">選択したファイルの解析</button>
+        <button @click = "imageUpload">選択したファイルの解析</button>
       </div>
     </section>
 
@@ -60,7 +60,7 @@ export default {
 
       targetCal:0,
 
-      selectedFoodFile:null,
+      selectedImageData:null,
 
       lat1: 0,
       lng1: 0,
@@ -98,8 +98,10 @@ export default {
           .post(path, requestbody) 
           .then(response => { 
              resolve(response.data) 
+             alert(response.data)
           }).catch(error => { 
               reject(error) 
+              alert("APIエラー：" + error)
           }) 
       }).catch((e) => { 
         throw e 
@@ -114,8 +116,10 @@ export default {
           .get(path) 
           .then(response => { 
              resolve(response.data) 
+             alert(response.data)
           }).catch(error => { 
               reject(error) 
+              alert("APIエラー：" + error)
           }) 
       }).catch((e) => { 
         throw e 
@@ -124,15 +128,17 @@ export default {
 
     //--画像解析
     requestServerCallComputerVision: function(){ 
-      const path = "https://rkcig8hh37.execute-api.us-east-1.amazonaws.com/v1"
-      const requestbody = this.selectedFoodFile.data
+      const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/callcomputervisionapi"
+      const requestbody = this.selectedImageData
       return new Promise((resolve, reject) => { 
         axios 
           .post(path, requestbody) 
           .then(response => { 
              resolve(response.data) 
+             alert(response.data)
           }).catch(error => { 
               reject(error) 
+              alert("APIエラー：" + error)
           }) 
       }).catch((e) => { 
         throw e 
@@ -188,10 +194,23 @@ export default {
     },
 
     fileSelected: function (event) {
-      this.selectedFoodFile = event.target.files[0]
-      console.log(this.selectedFoodFile)
+      const file = event.target.files[0]
+      if (file) {
+        const reader = new FileReader();
+
+        // ファイルの読み込みが完了したときの処理
+        reader.onload = function (event) {
+            this.selectedImageData = event.target.result; // バイナリデータ
+
+            console.log(this.selectedImageDataya);
+        };
+
+        // ファイルをバイナリデータとして読み込む
+        reader.readAsArrayBuffer(file);
+      }
+
     },
-    registFood: function () {
+    imageUpload: function () {
       console.log(this.selectedFoodFile)
       var response = this.requestServerCallComputerVision()
       console.log(response)
