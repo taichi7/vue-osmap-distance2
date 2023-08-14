@@ -210,9 +210,9 @@ export default {
       }
 
     },
-    imageUpload: function () {
+    imageUpload: async function () {
       console.log(this.selectedFoodFile)
-      var response = this.requestServerCallComputerVision()
+      var response = await this.requestServerCallComputerVision()
       console.log(response)
 
     },
