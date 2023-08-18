@@ -16,7 +16,7 @@
         </article>
       </div>
       <div class="regist-food">
-        <input type="File" @change="fileSelected"><br>
+        <input type="File" id="selectedFile"><br>
         <button @click = "imageUpload">選択したファイルの解析</button>
       </div>
     </section>
@@ -78,21 +78,21 @@ export default {
       //ユーザー情報取得
       this.currentAuthenticatedUser();
 
-      //window.onload = ()=>{
-        //目標消費カロリーと現在の消費カロリーを取得
-        var response = this.requestServerGetcalinfo()
-       console.log(response)
-
-        this.targetCal = 9999
-        this.cal = 100
-      //}    
+      window.onload = ()=>{
+          //目標消費カロリーと現在の消費カロリーを取得
+          this.requestServerGetcalinfo()
+      }    
   },
   methods: {
     //API実行メソッド
     //--消費カロリー登録
     requestServerRegistburncal: function(){ 
       const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/registburncal"
-      const requestbody = {username:this.loginUserName,cal: this.cal}
+      const requestbody = 
+      {
+        username:this.loginUserName,
+        cal: this.cal
+      }
       return new Promise((resolve, reject) => { 
         axios 
           .post(path, requestbody) 
@@ -115,8 +115,9 @@ export default {
         axios 
           .get(path) 
           .then(response => { 
-             resolve(response.data) 
-             alert(response.data)
+             resolve(response.data)       
+             this.targetCal = response.data.target
+             this.cal = response.data.burn   
           }).catch(error => { 
               reject(error) 
               alert("APIエラー：" + error)
@@ -127,7 +128,7 @@ export default {
     },   
 
     //--画像解析
-    requestServerCallComputerVision: function(){ 
+    requestServerCallComputerVision: async function(){ 
       const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/callcomputervisionapi"
       const requestbody = this.selectedImageData
       return new Promise((resolve, reject) => { 
@@ -193,28 +194,24 @@ export default {
       this.isExecuteCal = false;
     },
 
-    fileSelected: function (event) {
-      const file = event.target.files[0]
-      if (file) {
+    imageUpload: async function () {
+      const self = this;
+
+      let selectedFile = document.getElementById('selectedFile').files[0];
+      if (selectedFile) {
         const reader = new FileReader();
 
         // ファイルの読み込みが完了したときの処理
-        reader.onload = function (event) {
-            this.selectedImageData = event.target.result; // バイナリデータ
-
-            console.log(this.selectedImageDataya);
+        reader.onload = async function (e) {
+          self.selectedImageData = e.target.result; // バイナリデータ
+          console.log(self.selectedImageData);
+          var response = await self.requestServerCallComputerVision()
+          console.log(response)
         };
-
-        // ファイルをバイナリデータとして読み込む
-        reader.readAsArrayBuffer(file);
+        reader.readAsArrayBuffer(selectedFile);
+      }else{
+        alert("画像が選択されていません。")
       }
-
-    },
-    imageUpload: async function () {
-      console.log(this.selectedFoodFile)
-      var response = await this.requestServerCallComputerVision()
-      console.log(response)
-
     },
 
     calcDistance: function (self) {
