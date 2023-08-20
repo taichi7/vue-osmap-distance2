@@ -1,12 +1,10 @@
 <template>
   <div class="about">
-    <div>
-      <button style="margin-left: 10px;,text-align: left;" v-on:click="calStart">消費開始</button>
-      <button style="margin: 10px;" v-on:click="calStop">休憩</button>
-    </div>
     <section class="section">
-      <div class="container">                
-        <article class="message is-primary">
+      <button class="calButton" v-on:click="calStart">消費開始</button>
+      <button class="calButton" v-on:click="calStop">休憩</button> 
+      <div class="container">               
+        <article class="message is-primary" style="border: 1px solid #023a0d">
           <div class="message-header">
             <p>本日の消費カロリー</p>
           </div>
@@ -15,12 +13,17 @@
           </div>
         </article>
       </div>
+      <br>
+      <br>
       <div class="regist-food">
-        <input type="File" id="selectedFile"><br>
-        <button @click = "imageUpload">選択したファイルの解析</button>
+        <label class="my-file-input"><input type="File" id="selectedFile" @change = "imageUpload"/>食べ物を登録</label><br>    
+      </div>
+      <div class="imageResult">
+        <p>[登録された食べ物]<br>名前：「{{foodName}}」 <br> カロリー：{{foodCal}} kcal</p>
       </div>
     </section>
-
+    <br>
+      <br>
     <div class="distance-detail">
       -------------移動距離詳細--------------<br>
 
@@ -47,12 +50,59 @@
 </template>
 
 <style>
+.calButton {
+	text-align: center;
+	vertical-align: middle;
+	text-decoration: none;
+	width: 100px;
+  height:35px;
+	margin: 10px;
+	font-weight: bold;
+	border-radius: 0.3rem;
+	border-bottom: 7px solid #0686b2;
+	background: #27acd9;
+	color: #fff;
+}
+.calButton:hover {
+	margin-top: 6px;
+	border-bottom: 1px solid #0686b2;
+	color: #fff;
+}
 
+.my-file-input {
+  display: inline-block;
+  padding: 5px;
+  width: 200px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  background-color: rgb(85, 255, 187);
+  color: rgb(5, 5, 5);
+  box-shadow: #888 2px 2px 1px;
+  cursor: pointer;
+}
+.my-file-input:hover {
+  background-color: rgb(136, 255, 213);
+}
+.my-file-input:hover {
+  background-color: rgb(136, 255, 233);
+}
+.my-file-input:active {
+  box-shadow: #888888 1px 1px 1px;
+  position: relative;
+  top: 1px; left: 1px;
+}
+.my-file-input input {
+  display: none;
+}
 </style>
 
 <script>
 import  axios from 'axios' 
 import { Auth } from 'aws-amplify';
+
 export default {
   data() {
     return {
@@ -71,7 +121,10 @@ export default {
       totalDist: 0,
       cal:0,
 
-      isExecuteCal:false
+      isExecuteCal:false,
+
+      foodName:"",
+      foodCal:0
     }
   },
   mounted() {
@@ -98,10 +151,10 @@ export default {
           .post(path, requestbody) 
           .then(response => { 
              resolve(response.data) 
-             alert(response.data)
+             alert("消費したカロリーを登録しました。")
           }).catch(error => { 
               reject(error) 
-              alert("APIエラー：" + error)
+              alert("消費したカロリーの登録に失敗しました。[" + error + "]")
           }) 
       }).catch((e) => { 
         throw e 
@@ -109,18 +162,18 @@ export default {
     },
     
     //--カロリー情報取得
-    requestServerGetcalinfo: function(){ 
+    requestServerGetcalinfo: async function(){ 
       const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/getcalinfo" + "?username=" + this.loginUserName
       return new Promise((resolve, reject) => { 
         axios 
           .get(path) 
           .then(response => { 
              resolve(response.data)       
-             this.targetCal = response.data.target
-             this.cal = response.data.burn   
+             this.targetCal = Number(response.data.target)
+             this.cal = response.data.burn
           }).catch(error => { 
               reject(error) 
-              alert("APIエラー：" + error)
+              alert("ユーザーのカロリー情報取得に失敗しました。[" + error + "]")
           }) 
       }).catch((e) => { 
         throw e 
@@ -129,23 +182,47 @@ export default {
 
     //--画像解析
     requestServerCallComputerVision: async function(){ 
-      const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/callcomputervisionapi"
+      const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/getfoodcal"
       const requestbody = this.selectedImageData
+      return new Promise((resolve, reject) => { 
+        axios 
+          .post(path, requestbody)
+          .then(response => { 
+             resolve(response.data)
+             this.targetCal += Number(response.data.value)
+          }).catch(error => { 
+              reject(error) 
+              alert("画像解析に失敗しました。[" + error + "]")
+          }) 
+      }).catch((e) => { 
+        throw e 
+      }) 
+    },
+    
+        //--食べ物登録
+    requestServerRegistFood: async function(id){ 
+      const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/registfood"
+      const requestbody = 
+      {
+        username:this.loginUserName,
+        foodid: id
+      }
       return new Promise((resolve, reject) => { 
         axios 
           .post(path, requestbody) 
           .then(response => { 
              resolve(response.data) 
-             alert(response.data)
+             alert("本日の食事内容に「" + this.foodName + "」" + "を登録しました。")
           }).catch(error => { 
               reject(error) 
-              alert("APIエラー：" + error)
+              alert("食べ物の登録に失敗しました。[" + error + "]")
           }) 
       }).catch((e) => { 
         throw e 
       }) 
     },
 
+    //ユーザー情報取得処理
     currentAuthenticatedUser:async function () {
       try {
         const user = await Auth.currentAuthenticatedUser({
@@ -157,6 +234,7 @@ export default {
       }
     },
    
+    //カロリー消費開始処理
     calStart: function () {
       if (navigator.geolocation) {
         alert( "カロリー消費計算を開始します。" )
@@ -196,17 +274,30 @@ export default {
 
     imageUpload: async function () {
       const self = this;
-
       let selectedFile = document.getElementById('selectedFile').files[0];
       if (selectedFile) {
         const reader = new FileReader();
 
         // ファイルの読み込みが完了したときの処理
         reader.onload = async function (e) {
-          self.selectedImageData = e.target.result; // バイナリデータ
-          console.log(self.selectedImageData);
+          const arrayBuffer = e.target.result;
+          let binaryString = "";
+          const bytes = new Uint8Array(arrayBuffer);
+          const len = bytes.byteLength;
+          for (let i = 0; i < len; i++) {
+            binaryString += String.fromCharCode(bytes[i]);
+          }
+          const encodedData = btoa(binaryString)
+          self.selectedImageData = encodedData;
           var response = await self.requestServerCallComputerVision()
-          console.log(response)
+          //解析結果
+          self.foodName = response.name
+          self.foodCal = Number(response.value)
+          const foodID = response.id
+
+          //解析結果の登録
+          await self.requestServerRegistFood(foodID)
+
         };
         reader.readAsArrayBuffer(selectedFile);
       }else{
