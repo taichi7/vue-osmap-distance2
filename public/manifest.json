@@ -1,6 +1,6 @@
 {
-  "name": "vue-osmap-distance",
-  "short_name": "vue-osmap-distance",
+  "name": "カロリー計算アプリ",
+  "short_name": "カロリー計算アプリ",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
