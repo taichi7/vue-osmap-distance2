@@ -1,15 +1,15 @@
 <template>
   <div class="about">
-    <section class="section">
-      <button class="calButton" v-on:click="calStart">消費開始</button>
-      <button class="calButton" v-on:click="calStop">休憩</button> 
+    <section class="section" style="padding: 5px">
+      <button class="calButton" id = "start" v-on:click="calStart">消費開始</button>
+      <button class="calButton" id = "stop" v-on:click="calStop">休憩</button> 
       <div class="container">               
         <article class="message is-primary" style="border: 1px solid #023a0d">
           <div class="message-header">
             <p>本日の消費カロリー</p>
           </div>
           <div class="message-body">
-            <p>{{cal}} kcal / {{targetCal}} kcal</p>
+            <p>{{cal | round}} kcal / {{targetCal | round}} kcal</p>
           </div>
         </article>
       </div>
@@ -57,17 +57,22 @@
 	width: 100px;
   height:35px;
 	margin: 10px;
-	font-weight: bold;
+	/* font-weight: bold; */
 	border-radius: 0.3rem;
-	border-bottom: 7px solid #0686b2;
-	background: #27acd9;
-	color: #fff;
+	/* border-bottom: 7px solid #0686b2; */
+	background: #b7d2db;
+	color: #000000;
+  cursor: pointer;
 }
-.calButton:hover {
+.calButton:disabled{
+	background: #b8bdbd;
+	color: #000000;
+}
+/* .calButton:hover {
 	margin-top: 6px;
 	border-bottom: 1px solid #0686b2;
 	color: #fff;
-}
+} */
 
 .my-file-input {
   display: inline-block;
@@ -128,15 +133,180 @@ export default {
     }
   },
   mounted() {
+      document.getElementById("start").setAttribute("disabled", true);
+      document.getElementById("stop").setAttribute("disabled", true);
+
       //ユーザー情報取得
       this.currentAuthenticatedUser();
 
-      window.onload = ()=>{
-          //目標消費カロリーと現在の消費カロリーを取得
-          this.requestServerGetcalinfo()
+      window.onload = async ()=>{
+        //目標消費カロリーと現在の消費カロリーを取得
+        await this.requestServerGetcalinfo()
+        if(this.targetCal != 0){
+          document.getElementById("start").removeAttribute("disabled");
+        }
       }    
   },
-  methods: {
+  methods: {   
+    //カロリー消費開始処理
+    calStart: function () {
+      document.getElementById("start").setAttribute("disabled", true);
+      document.getElementById("stop").removeAttribute("disabled");
+      if (navigator.geolocation) {
+        alert( "カロリー消費計算を開始します。" )
+        // thisをselfという変数に代入して固定する
+        const self = this;
+        
+        self.isExecuteCal = true;
+        navigator.geolocation.getCurrentPosition(
+          function(position) { 
+            self.lat2 = position.coords.latitude;
+            self.lng2 = position.coords.longitude;
+          },
+          function(error) {
+            // エラー処理を書く
+            console.log(error);
+          }
+        );
+        //10秒毎にcalcDistance関数を実行する
+        const intervalId = setInterval(function () {
+          if(self.isExecuteCal == false){
+            clearInterval(intervalId);
+          }
+          self.calcDistance(self);
+        }, 10000);
+      }else{
+        alert( "位置情報が取得出来ません。" )
+      }
+    },
+
+    calStop: async function () {
+      //カロリー計算処理停止
+      document.getElementById("start").removeAttribute("disabled");
+      document.getElementById("stop").setAttribute("disabled", true);
+
+      this.isExecuteCal = false;
+      var response = await this.requestServerRegistburncal()
+      console.log(response)
+      alert( "カロリー消費計算を停止します。" )
+
+    },
+
+    imageUpload: async function () {
+      const self = this;
+      let selectedFile = document.getElementById('selectedFile').files[0];
+      if (selectedFile) {
+        const reader = new FileReader();
+
+        // ファイルの読み込みが完了したときの処理
+        reader.onload = async function (e) {
+          const arrayBuffer = e.target.result;
+          let binaryString = "";
+          const bytes = new Uint8Array(arrayBuffer);
+          const len = bytes.byteLength;
+          for (let i = 0; i < len; i++) {
+            binaryString += String.fromCharCode(bytes[i]);
+          }
+          const encodedData = btoa(binaryString)
+          self.selectedImageData = encodedData;
+          var response = await self.requestServerCallComputerVision()
+          //解析結果
+          self.foodName = response.name
+          self.foodCal = Number(response.value)
+          const foodID = response.id
+
+          //解析結果の登録
+          await self.requestServerRegistFood(foodID)
+
+          if(this.targetCal != 0){
+            document.getElementById("start").removeAttribute("disabled");
+          }
+
+        };
+        reader.readAsArrayBuffer(selectedFile);
+      }else{
+        alert("画像が選択されていません。")
+      }
+    },
+
+    calcDistance: function (self) {
+      //移動距離取得
+      navigator.geolocation.getCurrentPosition(
+        function(position) { 
+          self.lat1 = self.lat2
+          self.lng1 = self.lng2
+
+          self.lat2 = position.coords.latitude;
+          self.lng2 = position.coords.longitude;
+
+          const dist = self.distance(self.lat1, self.lng1, self.lat2, self.lng2)         
+          //5m以下は誤差とみなす
+          if (dist > 0.005){
+            self.dist = dist
+          }else{
+            self.dist = 0
+          }
+
+          //合計距離
+          self.totalDist = self.totalDist + self.dist
+        }
+      );
+
+      //カロリー計算
+      const weight = document.getElementById("weight")
+      const wei = weight.value //体重  
+      const minSpeed = self.dist * 6000 //速度（分速）           
+      if (70 <= minSpeed && minSpeed < 100) { 
+        //ウォーキング
+        self.cal = self.cal + (3.5 * wei * 0.0028 * 1.05)
+      }
+      else if(100 <= minSpeed && minSpeed < 200){
+        //ジョギング
+        self.cal = self.cal + (9 * wei * 0.0028 * 1.05)
+      }
+      else if(200 <= minSpeed && minSpeed < 600){
+        //ランニング
+        self.cal = self.cal + (13 * wei * 0.0028 * 1.05)                
+      }
+                                                                   
+      //終了処理
+      if (self.targetCal !== "" && self.targetCal <= self.cal) {
+        var result = window.confirm('目標達成！！！');  
+        if( result ) {
+          //初期化
+          self.lat1 = 0
+          self.lng1 = 0
+          self.lat2 = 0
+          self.lng2 = 0
+    
+          self.dist = 0
+          self.totalDist = 0
+          self.cal = 0
+
+          self.isExecuteCal = false;
+               
+          const target = document.getElementById("targetCal")
+          target.value = ""
+            
+          const weight = document.getElementById("weight")
+          weight.value = ""
+        }
+        else {
+            //キャンセル時そのまま
+        }
+      }
+    },
+
+    distance: function (lat1, lng1, lat2, lng2) {
+      //2点間の距離を取得
+      lat1 *= Math.PI / 180;
+      lng1 *= Math.PI / 180;
+      lat2 *= Math.PI / 180;
+      lng2 *= Math.PI / 180;
+      return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
+    },
+
+
     //API実行メソッド
     //--消費カロリー登録
     requestServerRegistburncal: function(){ 
@@ -199,7 +369,7 @@ export default {
       }) 
     },
     
-        //--食べ物登録
+    //--食べ物登録
     requestServerRegistFood: async function(id){ 
       const path = "https://352c29mrh4.execute-api.us-east-1.amazonaws.com/v1/registfood"
       const requestbody = 
@@ -212,7 +382,7 @@ export default {
           .post(path, requestbody) 
           .then(response => { 
              resolve(response.data) 
-             alert("本日の食事内容に「" + this.foodName + "」" + "を登録しました。")
+             alert("本日の食事に「" + this.foodName + "」" + "を登録しました。")
           }).catch(error => { 
               reject(error) 
               alert("食べ物の登録に失敗しました。[" + error + "]")
@@ -233,156 +403,6 @@ export default {
         console.log(err);
       }
     },
-   
-    //カロリー消費開始処理
-    calStart: function () {
-      if (navigator.geolocation) {
-        alert( "カロリー消費計算を開始します。" )
-        // thisをselfという変数に代入して固定する
-        const self = this;
-        
-        self.isExecuteCal = true;
-        navigator.geolocation.getCurrentPosition(
-          function(position) { 
-            self.lat2 = position.coords.latitude;
-            self.lng2 = position.coords.longitude;
-          },
-          function(error) {
-            // エラー処理を書く
-            console.log(error);
-          }
-        );
-        //10秒毎にcalcDistance関数を実行する
-        const intervalId = setInterval(function () {
-          if(self.isExecuteCal == false){
-            clearInterval(intervalId);
-          }
-          self.calcDistance(self);
-        }, 10000);
-      }else{
-        alert( "位置情報が取得出来ません。" )
-      }
-    },
-
-    calStop: async function () {
-      //カロリー計算処理停止
-      var response = await this.requestServerRegistburncal()
-      console.log(response)
-      alert( "カロリー消費計算を停止します。" )
-      this.isExecuteCal = false;
-    },
-
-    imageUpload: async function () {
-      const self = this;
-      let selectedFile = document.getElementById('selectedFile').files[0];
-      if (selectedFile) {
-        const reader = new FileReader();
-
-        // ファイルの読み込みが完了したときの処理
-        reader.onload = async function (e) {
-          const arrayBuffer = e.target.result;
-          let binaryString = "";
-          const bytes = new Uint8Array(arrayBuffer);
-          const len = bytes.byteLength;
-          for (let i = 0; i < len; i++) {
-            binaryString += String.fromCharCode(bytes[i]);
-          }
-          const encodedData = btoa(binaryString)
-          self.selectedImageData = encodedData;
-          var response = await self.requestServerCallComputerVision()
-          //解析結果
-          self.foodName = response.name
-          self.foodCal = Number(response.value)
-          const foodID = response.id
-
-          //解析結果の登録
-          await self.requestServerRegistFood(foodID)
-
-        };
-        reader.readAsArrayBuffer(selectedFile);
-      }else{
-        alert("画像が選択されていません。")
-      }
-    },
-
-    calcDistance: function (self) {
-      //移動距離取得
-      navigator.geolocation.getCurrentPosition(
-        function(position) { 
-          self.lat1 = self.lat2
-          self.lng1 = self.lng2
-
-          self.lat2 = position.coords.latitude;
-          self.lng2 = position.coords.longitude;
-
-          const dist = self.distance(self.lat1, self.lng1, self.lat2, self.lng2)         
-          //5m以下は誤差とみなす
-          if (dist > 0.005){
-            self.dist = dist
-          }else{
-            self.dist = 0
-          }
-
-          //合計距離
-          self.totalDist = self.totalDist + self.dist
-        }
-      );
-
-      //カロリー計算
-      const weight = document.getElementById("weight")
-      const wei = weight.value //体重  
-      const minSpeed = self.dist * 6000 //速度（分速）           
-      if (70 <= minSpeed && minSpeed < 100) { 
-        //ウォーキング
-        self.cal = self.cal + (3.5 * wei * 0.0028 * 1.05)
-      }
-      else if(100 <= minSpeed && minSpeed < 200){
-        //ジョギング
-        self.cal = self.cal + (9 * wei * 0.0028 * 1.05)
-      }
-      else if(200 <= minSpeed && minSpeed < 600){
-        //ランニング
-        self.cal = self.cal + (13 * wei * 0.0028 * 1.05)                
-      }
-                                                                   
-      //終了処理
-      if (self.targetCal !== "" && self.targetCal <= self.cal) {
-        var result = window.confirm('目標達成！初期化しますか？');  
-        if( result ) {
-          //初期化
-          self.lat1 = 0
-          self.lng1 = 0
-          self.lat2 = 0
-          self.lng2 = 0
-    
-          self.dist = 0
-          self.totalDist = 0
-          self.cal = 0
-
-          self.isExecuteCal = false;
-               
-          const target = document.getElementById("targetCal")
-          target.value = ""
-            
-          const weight = document.getElementById("weight")
-          weight.value = ""
-        }
-        else {
-            //キャンセル時そのまま
-        }
-      }
-    },
-
-    distance: function (lat1, lng1, lat2, lng2) {
-      //2点間の距離を取得
-      lat1 *= Math.PI / 180;
-      lng1 *= Math.PI / 180;
-      lat2 *= Math.PI / 180;
-      lng2 *= Math.PI / 180;
-      return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
-    },
-
-
   },
   
   filters: {
