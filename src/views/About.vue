@@ -83,16 +83,16 @@
   overflow: hidden;
   font-size: 14px;
   text-overflow: ellipsis;
-  background-color: rgb(85, 255, 187);
+  background-color: rgb(255, 167, 85);
   color: rgb(5, 5, 5);
   box-shadow: #888 2px 2px 1px;
   cursor: pointer;
 }
 .my-file-input:hover {
-  background-color: rgb(136, 255, 213);
+  background-color: rgb(255, 213, 136);
 }
 .my-file-input:hover {
-  background-color: rgb(136, 255, 233);
+  background-color: rgb(255, 233, 136);
 }
 .my-file-input:active {
   box-shadow: #888888 1px 1px 1px;
