@@ -340,7 +340,7 @@ export default {
           .then(response => { 
              resolve(response.data)       
              this.targetCal = Number(response.data.target)
-             this.cal = response.data.burn
+             this.cal = Number(response.data.burn)
           }).catch(error => { 
               reject(error) 
               alert("ユーザーのカロリー情報取得に失敗しました。[" + error + "]")
