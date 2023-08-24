@@ -1,6 +1,8 @@
 <template>
   <div class="about">
     <section class="section" style="padding: 5px">
+      <b>ユーザー名 : </b><b>[ {{loginUserName}} ]</b><br><br>
+      <b>体重 : </b><input type="number" id="weight" name="weight" requiredminlength="4" maxlength="8" size="10"><b> kg</b><br>
       <button class="calButton" id = "start" v-on:click="calStart">消費開始</button>
       <button class="calButton" id = "stop" v-on:click="calStop">休憩</button> 
       <div class="container">               
@@ -16,7 +18,7 @@
       <br>
       <br>
       <div class="regist-food">
-        <label class="my-file-input"><input type="File" id="selectedFile" @change = "imageUpload"/>食べ物を登録</label><br>    
+        <label class="my-file-input"><input type="File" id="selectedFile" @change = "imageUpload"/>食事を登録</label><br>    
       </div>
       <div class="imageResult">
         <p>[登録された食べ物]<br>名前：「{{foodName}}」 <br> カロリー：{{foodCal}} kcal</p>
@@ -26,7 +28,6 @@
       <br>
     <div class="distance-detail">
       -------------移動距離詳細--------------<br>
-
       ＜現在地＞<br>
       緯度：{{lat2}}   経度：{{lng2}}<br>
       ＜10秒前の地点＞<br>
@@ -34,11 +35,6 @@
       ＜歩いた距離＞<br>
       １０秒間：{{dist}} km<br>
       合計：{{totalDist}} km<br>
-      ＜username＞<br>
-      {{loginUserName}} <br>
-      <p>体重</p>
-    <input type="number" id="weight" name="weight" required
-       minlength="4" maxlength="8" size="10"><b>kg</b><br>
       -----------------------------------------<br>
     </div>
 
