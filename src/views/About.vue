@@ -1,7 +1,14 @@
 <template>
   <div class="about">
+    <div class="sk-chase">
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+      <div class="sk-chase-dot"></div>
+    </div>
     <section class="section" style="padding: 5px">
-      <b>ユーザー名 : </b><b>[ {{loginUserName}} ]</b><br><br>
       <b>体重 : </b><input type="number" id="weight" name="weight" requiredminlength="4" maxlength="8" size="10"><b> kg</b><br>
       <button class="calButton" id = "start" v-on:click="calStart">消費開始</button>
       <button class="calButton" id = "stop" v-on:click="calStop">休憩</button> 
@@ -21,11 +28,16 @@
         <label class="my-file-input"><input type="File" id="selectedFile" @change = "imageUpload"/>食事を登録</label><br>    
       </div>
       <div class="imageResult">
-        <p>[登録された食べ物]<br>名前：「{{foodName}}」 <br> カロリー：{{foodCal}} kcal</p>
+        <p>[登録された食事]<br>名前：「{{foodName}}」 <br> カロリー：{{foodCal}} kcal</p>
       </div>
     </section>
     <br>
-      <br>
+    <br>
+    <b>ユーザー名 : </b><b>[ {{loginUserName}} ]</b>
+    <br>
+    <br>
+    <br>
+    <br>
     <div class="distance-detail">
       -------------移動距離詳細--------------<br>
       ＜現在地＞<br>
@@ -46,6 +58,7 @@
 </template>
 
 <style>
+/*運動ボタン*/
 .calButton {
 	text-align: center;
 	vertical-align: middle;
@@ -62,7 +75,7 @@
 }
 .calButton:disabled{
 	background: #b8bdbd;
-	color: #000000;
+	color: #919191;
 }
 /* .calButton:hover {
 	margin-top: 6px;
@@ -70,6 +83,8 @@
 	color: #fff;
 } */
 
+
+/*食事登録ボタン*/
 .my-file-input {
   display: inline-block;
   padding: 5px;
@@ -98,11 +113,68 @@
 .my-file-input input {
   display: none;
 }
+
+
+/*loading*/
+.sk-chase {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  animation: sk-chase 2.5s infinite linear both;
+}
+
+.sk-chase-dot {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0; 
+  animation: sk-chase-dot 2.0s infinite ease-in-out both; 
+}
+
+.sk-chase-dot:before {
+  content: '';
+  display: block;
+  width: 25%;
+  height: 25%;
+  background-color: #fff;
+  border-radius: 100%;
+  animation: sk-chase-dot-before 2.0s infinite ease-in-out both; 
+}
+
+.sk-chase-dot:nth-child(1) { animation-delay: -1.1s; }
+.sk-chase-dot:nth-child(2) { animation-delay: -1.0s; }
+.sk-chase-dot:nth-child(3) { animation-delay: -0.9s; }
+.sk-chase-dot:nth-child(4) { animation-delay: -0.8s; }
+.sk-chase-dot:nth-child(5) { animation-delay: -0.7s; }
+.sk-chase-dot:nth-child(6) { animation-delay: -0.6s; }
+.sk-chase-dot:nth-child(1):before { animation-delay: -1.1s; }
+.sk-chase-dot:nth-child(2):before { animation-delay: -1.0s; }
+.sk-chase-dot:nth-child(3):before { animation-delay: -0.9s; }
+.sk-chase-dot:nth-child(4):before { animation-delay: -0.8s; }
+.sk-chase-dot:nth-child(5):before { animation-delay: -0.7s; }
+.sk-chase-dot:nth-child(6):before { animation-delay: -0.6s; }
+
+@keyframes sk-chase {
+  100% { transform: rotate(360deg); } 
+}
+
+@keyframes sk-chase-dot {
+  80%, 100% { transform: rotate(360deg); } 
+}
+
+@keyframes sk-chase-dot-before {
+  50% {
+    transform: scale(0.4); 
+  } 100%, 0% {
+    transform: scale(1.0); 
+  } 
+}
 </style>
 
 <script>
 import  axios from 'axios' 
-import { Auth } from 'aws-amplify';
+import { Auth, Hub, Logger  } from 'aws-amplify';
 
 export default {
   data() {
@@ -129,21 +201,43 @@ export default {
     }
   },
   mounted() {
+    //ログインイベント
+    const logger = new Logger('My-Logger');
+    let isSignIn = false;
+    const listener = (data) => {
+      switch (data.payload.event) {
+        case 'signIn':
+          logger.info('user signed in');
+          //画面初期表示
+          this.initialize();
+          isSignIn = true
+          break;
+      }
+    }
+    Hub.listen('auth', listener);
+
+    //画面初期表示
+    if(isSignIn == false){
+      this.initialize();
+    }
+  },
+  methods: {
+    //初期処理
+    initialize: async function () {
       document.getElementById("start").setAttribute("disabled", true);
       document.getElementById("stop").setAttribute("disabled", true);
 
       //ユーザー情報取得
-      this.currentAuthenticatedUser();
+      await this.currentAuthenticatedUser();
 
-      window.onload = async ()=>{
-        //目標消費カロリーと現在の消費カロリーを取得
-        await this.requestServerGetcalinfo()
-        if(this.targetCal != 0){
-          document.getElementById("start").removeAttribute("disabled");
-        }
-      }    
-  },
-  methods: {   
+      //ユーザーのDB情報取得
+      await this.requestServerGetcalinfo()
+      if(this.targetCal != 0){
+        document.getElementById("start").removeAttribute("disabled");
+      }
+
+    },    
+    
     //カロリー消費開始処理
     calStart: function () {
       document.getElementById("start").setAttribute("disabled", true);
@@ -267,29 +361,8 @@ export default {
                                                                    
       //終了処理
       if (self.targetCal !== "" && self.targetCal <= self.cal) {
-        var result = window.confirm('目標達成！！！');  
-        if( result ) {
-          //初期化
-          self.lat1 = 0
-          self.lng1 = 0
-          self.lat2 = 0
-          self.lng2 = 0
-    
-          self.dist = 0
-          self.totalDist = 0
-          self.cal = 0
-
-          self.isExecuteCal = false;
-               
-          const target = document.getElementById("targetCal")
-          target.value = ""
-            
-          const weight = document.getElementById("weight")
-          weight.value = ""
-        }
-        else {
-            //キャンセル時そのまま
-        }
+        alert('目標達成！！！消費カロリーを登録します。');  
+        this.requestServerRegistburncal()
       }
     },
 
@@ -339,7 +412,7 @@ export default {
              this.cal = Number(response.data.burn)
           }).catch(error => { 
               reject(error) 
-              alert("ユーザーのカロリー情報取得に失敗しました。[" + error + "]")
+              //alert("ユーザーのカロリー情報取得に失敗しました。[" + error + "]")
           }) 
       }).catch((e) => { 
         throw e 
